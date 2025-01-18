@@ -1,0 +1,32 @@
+---
+# Configure OCP4 DNS Server on Helper Node
+
+- hosts: all
+  vars_files:
+    - ../vars/main.yml
+  handlers:
+  - import_tasks: ../handlers/main.yml
+
+  tasks:
+  - name: DNF update the system
+    dnf:
+      name:  "*"
+      state: latest
+
+  - name: Install required packages
+    ansible.builtin.dnf:
+      name:
+        - vim 
+        - wget 
+        - curl 
+        - bash-completion 
+        - tree 
+        - tar 
+        - libselinux-python3 
+        - firewalld
+      state: latest
+
+  - name: Rebooting
+    reboot:
+      post_reboot_delay: 60
+    throttle: 1

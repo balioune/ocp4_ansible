@@ -1,0 +1,22 @@
+---
+# Configure OCP4 DNS Server on Helper Node
+
+- hosts: all
+  vars_files:
+    - ../vars/main.yml
+  handlers:
+  - import_tasks: ../handlers/main.yml
+
+  tasks:
+  - name: Install required packages
+    ansible.builtin.dnf:
+      name:
+        - dhcp-server
+      state: latest
+  - name: Enable DHCP Service
+    systemd:
+      name: dhcpd
+      state: started
+      enabled: true 
+  - name: Move old /etc/dhcp/dhcpd.conf to /etc/dhcp/dhcpd.conf.bak
+    command: mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bak

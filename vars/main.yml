@@ -2,12 +2,15 @@
 ppc64le: false
 uefi: false
 disk: vda                                  #disk where you are installing RHCOS on the masters/workers
+OKD_VERSION: "4.14.0-0.okd-2023-11-14-101924"
+ARCH: "x86_64"
+CoreOS_VERSION: "38.20231027.3.2"     # https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable
 helper:
   name: "bastion"                          #hostname for your helper node
   ipaddr: "192.168.100.254"                #current IP address of the helper
-  networkifacename: "ens3"                 #interface of the helper node,ACTUAL name of the interface, NOT the NetworkManager name, check with $ ip ad
+  networkifacename: "enp1s0"                 #interface of the helper node,ACTUAL name of the interface, NOT the NetworkManager name, check with $ ip ad
 dns:
-  domain: "example.com"                    #DNS server domain. Should match  baseDomain inside the install-config.yaml file.
+  domain: "linuxsysadmins.lan"             #DNS server domain. Should match  baseDomain inside the install-config.yaml file.
   clusterid: "ocp4"                        #needs to match what you will for metadata.name inside the install-config.yaml file
   forwarder1: "8.8.8.8"                    #DNS forwarder
   forwarder2: "1.1.1.1"                    #second DNS forwarder

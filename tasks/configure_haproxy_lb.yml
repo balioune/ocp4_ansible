@@ -7,6 +7,21 @@
   - import_tasks: ../handlers/main.yml
 
   tasks:
+  - name: Install HaProxy packages
+    ansible.builtin.yum:
+      name:
+        - haproxy
+      state: latest
+
+  - name: Set haproxy_connect_any  flag on and keep it persistent across reboots
+    seboolean:
+      name: haproxy_connect_any 
+      state: true
+      persistent: true
+
+  - name: Move /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.default
+    shell: mv /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.default
+
   - name: Write out haproxy config file
     ansible.builtin.template:
       src: ../templates/haproxy.cfg.j2

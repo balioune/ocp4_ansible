@@ -1,0 +1,116 @@
+---
+# Configure OCP4 TFTP/PXE on Helper Node
+
+- hosts: all
+  vars_files:
+    - ../vars/main.yml
+  handlers:
+  - import_tasks: ../handlers/main.yml
+
+  tasks:
+  - name: Install tftp packages
+    ansible.builtin.yum:
+      name:
+        - tftp-server
+        - syslinux
+      state: latest
+
+
+  - name: Copy helper-tftp.service to /etc/systemd/system/helper-tftp.service
+    copy:
+      src: ../files/helper-tftp.service
+      dest: /etc/systemd/system/helper-tftp.service
+      owner: root
+      group: root
+      mode: u+rwx,g+wx,o+rwx
+
+  - name: Copy start-tftp.sh to /usr/local/bin/start-tftp.sh
+    copy:
+      src: ../files/start-tftp.sh
+      dest: /usr/local/bin/start-tftp.sh
+      owner: root
+      group: root
+      mode: u+rwx,g+wx,o+rwx
+
+  - name: Just force systemd to reread configs (2.4 and above)
+    systemd:
+      daemon_reload: true
+
+  - name: Enable TFTP Helper Service
+    systemd:
+      name: helper-tftp
+      state: started
+      enabled: true
+
+  - name: Enable TFTP Service
+    systemd:
+      name: tftp
+      state: started
+      enabled: true
+
+  - name: Create /var/lib/tftpboot/pxelinux.cfg
+    ansible.builtin.file:
+      path: /var/lib/tftpboot/pxelinux.cfg
+      state: directory
+      mode: '0755'
+
+  - name: Copy /usr/share/syslinux/
+    copy:
+      src: /usr/share/syslinux/
+      dest: /var/lib/tftpboot
+      remote_src: true
+  - name: Create /var/lib/tftpboot/rhcos
+    ansible.builtin.file:
+      path: /var/lib/tftpboot/rhcos
+      state: directory
+      mode: '0755'
+  
+  - name: Download live-kernel
+    get_url:
+      url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/{{CoreOS_VERSION}}/{{ARCH}}/fedora-coreos-{{CoreOS_VERSION}}-live-kernel-{{ARCH}}"
+      dest: /var/lib/tftpboot/rhcos/kernel
+
+  - name: Download live-initramfs
+    get_url:
+      url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/{{CoreOS_VERSION}}/{{ARCH}}/fedora-coreos-{{CoreOS_VERSION}}-live-initramfs.{{ARCH}}.img"
+      dest: /var/lib/tftpboot/rhcos/initramfs.img
+
+  - name: relabel the files for selinux
+    command: restorecon -RFv  /var/lib/tftpboot/rhcos
+
+  - name: Install httpd
+    ansible.builtin.yum:
+      name:
+        - httpd
+      state: latest
+
+  - name: Remove /etc/httpd/conf.d/welcome.conf
+    file:
+      path: /etc/httpd/conf.d/welcome.conf
+      state: absent
+      
+  - name: Enable httpd Service
+    systemd:
+      name: httpd
+      state: started
+      enabled: true
+
+  - replace:
+      path: "/etc/httpd/conf/httpd.conf"
+      regexp: 'Listen\s+80'
+      replace: "Listen 8080"
+    notify: restart httpd
+
+  - name: Create /var/www/html/rhcos
+    ansible.builtin.file:
+      path: /var/www/html/rhcos
+      state: directory
+      mode: '0755'
+
+  - name: Download live-rootfs
+    get_url:
+      url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/{{CoreOS_VERSION}}/{{ARCH}}/fedora-coreos-{{CoreOS_VERSION}}-live-rootfs.{{ARCH}}.img"
+      dest: /var/www/html/rhcos/rootfs.img
+
+  - name: relabel the files for selinux
+    command: restorecon -RFv /var/www/html/rhcos

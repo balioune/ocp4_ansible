@@ -1,0 +1,19 @@
+---
+# Configure OCP4 HAProxy Load balancer on Helper Node
+- hosts: all
+  vars_files:
+    - ../vars/main.yml
+  handlers:
+  - import_tasks: ../handlers/main.yml
+
+  tasks:
+  - name: Download OKD Client
+    get_url:
+      url: "https://github.com/okd-project/okd/releases/download/{{OKD_VERSION}}/openshift-client-linux-{{OKD_VERSION}}.tar.gz"
+      dest: /root
+
+  - name: Download OKD Installer
+    get_url:
+      url: "https://github.com/okd-project/okd/releases/download/{{OKD_VERSION}}/openshift-install-linux-{{OKD_VERSION}}.tar.gz"
+      dest: /root
+
