@@ -12,6 +12,8 @@ sudo systemctl start libvirtd
 
 sudo apt -y install libguestfs-tools virt-top
 
+# Allow KVM routed network to go outside
+sudo iptables -t nat -A POSTROUTING -o enp5s0f0 -j MASQUERADE
 
 sudo virt-builder fedora-35  --format qcow2  \
 --size 20G -o /var/lib/libvirt/images/ocp-bastion-server.qcow2 \
