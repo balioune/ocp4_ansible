@@ -59,6 +59,7 @@
       src: /usr/share/syslinux/
       dest: /var/lib/tftpboot
       remote_src: true
+
   - name: Create /var/lib/tftpboot/rhcos
     ansible.builtin.file:
       path: /var/lib/tftpboot/rhcos

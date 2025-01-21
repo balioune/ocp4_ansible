@@ -1,0 +1,69 @@
+---
+# Configure OCP4  Firewalld rules to open
+
+- hosts: all
+
+  tasks:
+  - name: Permanently enable http service, also enable it immediately if possible
+    firewalld:
+      service: http
+      state: enabled
+      permanent: true
+      immediate: true
+
+  - name: Permanently enable https service
+    firewalld:
+      service: https
+      state: enabled
+      permanent: true
+      immediate: true
+
+  - name: Permanently enable dhcp service
+    firewalld:
+      service: dhcp
+      state: enabled
+      permanent: true
+      immediate: true
+
+  - name: Permanently enable tftp service
+    firewalld:
+      service: tftp
+      state: enabled
+      permanent: true
+      immediate: true
+
+  - name: Permanently enable dns service
+    firewalld:
+      service: dns
+      state: enabled
+      permanent: true
+      immediate: true
+
+  - name: Add http 8080/tcp
+    firewalld:
+      port: 8080/tcp
+      permanent: true
+      state: enabled
+      immediate: true
+
+  - name: Add http 9000/tcp for haproxy stats
+    firewalld:
+      port: 9000/tcp
+      permanent: true
+      state: enabled
+      immediate: true
+
+  - name: Add https 6443/tcp
+    firewalld:
+      port: 6443/tcp
+      permanent: true
+      state: enabled
+      immediate: true
+
+  - name: Add 22623/tcp for machines configs
+    firewalld:
+      port: 22623/tcp
+      permanent: true
+      state: enabled
+      immediate: true
+

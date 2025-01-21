@@ -13,10 +13,10 @@
       name:
         - dhcp-server
       state: latest
-  - name: Enable DHCP Service
-    systemd:
-      name: dhcpd
-      state: started
-      enabled: true 
+  #- name: Enable DHCP Service
+  #  systemd:
+  #    name: dhcpd
+  #    state: started
+  #    enabled: true 
   - name: Move old /etc/dhcp/dhcpd.conf to /etc/dhcp/dhcpd.conf.bak
     command: mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bak

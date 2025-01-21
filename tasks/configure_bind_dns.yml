@@ -20,6 +20,7 @@
       name: named
       state: started
       enabled: true
+
   - name: Copy set-dns-serial.sh to /usr/local/bin/set-dns-serial.sh
     copy:
       src: ../files/set-dns-serial.sh

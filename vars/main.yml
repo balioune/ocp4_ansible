@@ -2,9 +2,9 @@
 ppc64le: false
 uefi: false
 disk: vda                                  #disk where you are installing RHCOS on the masters/workers
-OKD_VERSION: "4.14.0-0.okd-2023-11-14-101924"
+OKD_VERSION: "4.17.0-okd-scos.0"
 ARCH: "x86_64"
-CoreOS_VERSION: "38.20231027.3.2"     # https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable
+CoreOS_VERSION: "39.20231101.3.0"     # https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable
 helper:
   name: "bastion"                          #hostname for your helper node
   ipaddr: "192.168.100.254"                #current IP address of the helper
